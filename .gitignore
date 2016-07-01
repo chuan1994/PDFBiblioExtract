@@ -1,4 +1,10 @@
 *.class
+.metadata/
+RemoteSystemsTempFiles/
+
+RefExtract/.classpath
+RefExtract/.project
+RefExtract/.settings/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
