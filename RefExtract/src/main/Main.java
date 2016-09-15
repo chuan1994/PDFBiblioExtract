@@ -1,6 +1,11 @@
 package main;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -12,19 +17,31 @@ public class Main {
 	private static HashMap<String, File> inputFiles = new HashMap<String, File>();
 	public static File outputFolder;
 	public boolean validInput;
-	
+
 	public static void main(String[] args) {
-		
-		
-		ArrayList<String> temp= new ArrayList<String>();
-		temp.add("[1] Bifet,A.,Holmes,G.,Pfahringer,B.,&amp;Gavald,R.(2011).Miningfrequentclosedgraphson evolvingdatastreams.In: Proceeding of the 17th ACMSIGKDD International Conference on Knowledge Discovery and Data Mining, pp 591-599.");
-		temp.add("[2] Yan, X., &amp; Han, J. (2002). gSpan: graph-based substructure pattern mining. In: Proceeding of the 2002 International Conference on Data Mining (ICDM02), Maebashi, Japan, pp 72172");
-		temp.add("[28] Weininger, D. (1988). SMILES, a chemical language and information system. Introduction to methodology and encoding rules. Journal of Chemical Information and Computer Sciences, 28(1), pp 31-36 ");
-		temp.add("[32] Stanford Large Network Dataset Collection. (n.d.). Retrieved from https://snap.stanford.edu/data/index.html");
-		temp.add("[38] Holder,L.B.,Cook,D.J.,&Djoko,S.(1994).SubstuctureDiscoveryintheSUBDUESystem. In: Proceeding of the AAAI94 Workshop Knowledge Discovery in Databases, pp 169-180 ");
-		FreeCiteConnection fcc = new FreeCiteConnection(temp);
-		fcc.sendPostData();
-		
+
+		// ArrayList<String> temp= new ArrayList<String>();
+		// temp.add("[1]
+		// Bifet,A.,Holmes,G.,Pfahringer,B.,&amp;Gavald,R.(2011).Miningfrequentclosedgraphson
+		// evolvingdatastreams.In: Proceeding of the 17th ACMSIGKDD
+		// International Conference on Knowledge Discovery and Data Mining, pp
+		// 591-599.");
+		// temp.add("[2] Yan, X., &amp; Han, J. (2002). gSpan: graph-based
+		// substructure pattern mining. In: Proceeding of the 2002 International
+		// Conference on Data Mining (ICDM02), Maebashi, Japan, pp 72172");
+		// temp.add("[28] Weininger, D. (1988). SMILES, a chemical language and
+		// information system. Introduction to methodology and encoding rules.
+		// Journal of Chemical Information and Computer Sciences, 28(1), pp
+		// 31-36 ");
+		// temp.add("[32] Stanford Large Network Dataset Collection. (n.d.).
+		// Retrieved from https://snap.stanford.edu/data/index.html");
+		// temp.add("[38]
+		// Holder,L.B.,Cook,D.J.,&Djoko,S.(1994).SubstuctureDiscoveryintheSUBDUESystem.
+		// In: Proceeding of the AAAI94 Workshop Knowledge Discovery in
+		// Databases, pp 169-180 ");
+		// FreeCiteConnection fcc = new FreeCiteConnection(temp);
+		// fcc.sendPostData();
+
 		if (args.length < 2) {
 			printHelp();
 			return;
@@ -37,31 +54,64 @@ public class Main {
 
 		Set<String> keys = inputFiles.keySet();
 
-
 		ArrayList<BiblioExtractor> beList = new ArrayList<BiblioExtractor>();
-		
+
+		generateXSL();
+
 		for (String x : keys) {
 			BiblioExtractor be = new BiblioExtractor(x, inputFiles.get(x));
 			beList.add(be);
 			be.execute();
 		}
-		
-		while(!beList.isEmpty()){
+
+		while (!beList.isEmpty()) {
 			ArrayList<BiblioExtractor> removeList = new ArrayList<BiblioExtractor>();
-			for(BiblioExtractor be : beList){
-				if(be.isDone()){
+			for (BiblioExtractor be : beList) {
+				if (be.isDone()) {
 					removeList.add(be);
 				}
 			}
-			
-			for(BiblioExtractor be : removeList){
+
+			for (BiblioExtractor be : removeList) {
 				beList.remove(be);
 			}
 		}
 
 	}
-	
-	
+
+	private static void generateXSL() {
+		try {
+			File xsl = new File(outputFolder.getPath() + File.separator + "temp.xsl");
+
+			if (xsl.isFile()) {
+				return;
+			}
+
+			InputStream is = Main.class.getResourceAsStream("/resources/temp.xsl");
+			OutputStream os = new FileOutputStream(xsl);
+			
+			int read = 0;
+			
+			byte[] bytes = new byte[1024];
+
+			while ((read = is.read(bytes)) != -1) {
+				os.write(bytes, 0, read);
+			}
+			
+			
+			os.close();
+			is.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	private static void processArgs(String[] args) {
 		File outTemp = new File(args[args.length - 1]);
 		setOutput(outTemp);
@@ -70,7 +120,7 @@ public class Main {
 			addInput(args[i]);
 		}
 	}
-	
+
 	private static void setOutput(File outFolder) {
 		if (outFolder.isFile()) {
 			System.out.println("Invalid output directory");
@@ -82,7 +132,7 @@ public class Main {
 			outputFolder.mkdir();
 		}
 	}
-	
+
 	private static void addInput(String path) {
 		File y = new File(path);
 		if (!y.isFile()) {
@@ -92,7 +142,7 @@ public class Main {
 
 		inputFiles.put(path, y);
 	}
-	
+
 	private static void printHelp() {
 		System.out.println("To execute this jar please follow following:");
 		System.out.println("Run the jar with a list of input files separated by a space followed by an output folder");
