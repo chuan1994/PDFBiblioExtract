@@ -18,6 +18,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import extractor.BiblioPageFinder;
@@ -69,10 +72,24 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 		FreeCiteConnection fcc = new FreeCiteConnection(extracted);
 		String returnVal = fcc.sendPostData();
 		
+		System.out.println("Processing reply");
 		//Transform to XML document
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = builder.parse(new InputSource(new StringReader(returnVal)));
 		
+		Element root = doc.getDocumentElement();
+		NodeList citations = doc.getElementsByTagName("citation");
+		for(int i = citations.getLength()-1; i>=0; i-- ){
+			String value = citations.item(i).getAttributes().getNamedItem("valid").getNodeValue();
+			if(value.equals("false")){
+				root.removeChild(citations.item(i));
+			}
+		}
+		
+		NodeList ctx = doc.getElementsByTagName("ctx:context-objects");
+		for(int i = ctx.getLength()-1; i>=0; i-- ){
+			root.removeChild(ctx.item(i));
+		}
 		//Print to Output
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
