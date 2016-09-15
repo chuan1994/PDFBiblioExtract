@@ -1,6 +1,7 @@
 package extractor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -17,8 +18,12 @@ public class BiblioStripper extends PDFTextStripper{
 		endPage = currentPage;
 	}
 	
-	public String getBiblio(){
-		return "";
+	
+	
+	
+	
+	public ArrayList<String> getBiblio(){
+		return new ArrayList<String>();
 	}
 	
 }
