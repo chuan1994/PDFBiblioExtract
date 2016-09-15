@@ -1,6 +1,7 @@
 package main;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
@@ -28,15 +29,16 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 
 	private String path;
 	private File pdf;
-	private File outputFolder;
 	private PDDocument pdDoc;
+	private File output;
 	
 	private ArrayList<FontGroup> fontGroups = new ArrayList<FontGroup>();
 	
 	public BiblioExtractor(String path, File pdf) {
 		this.path = path;
 		this.pdf = pdf;
-
+		
+		getOutput();
 		this.setup();
 	}
 
@@ -79,7 +81,33 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		
-		transformer.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
+		
+		transformer.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(new FileOutputStream(output), "UTF-8")));
 		return null;
+	}
+	
+	private void getOutput(){
+		String outputPath = Main.outputFolder.getPath() + File.separator + pdf.getName().split("\\.")[0] + ".xml";
+
+		try {
+			output = new File(outputPath);
+			if (!output.exists()) {
+				output.createNewFile();
+			} else{
+				int i = 0;
+				while(output.exists()){
+					i++;
+					outputPath = Main.outputFolder.getCanonicalPath() + File.separator + pdf.getName().split("\\.")[0] + "("
+							+ i + ")" + ".xml";
+
+					output = new File(outputPath);
+				}
+				
+				output.createNewFile();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

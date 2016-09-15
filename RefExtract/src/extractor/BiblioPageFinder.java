@@ -65,7 +65,7 @@ public class BiblioPageFinder extends PDFTextStripper {
 	
 	public int getBiblioStart() throws IOException {
 		findPages();
-		return currentPage;
+		return currentPage+1;
 	}
 	
 	public float getLeftMost(){
