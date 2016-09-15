@@ -38,7 +38,11 @@ public class Main {
 		Set<String> keys = inputFiles.keySet();
 
 
+		
+		
 		ArrayList<BiblioExtractor> beList = new ArrayList<BiblioExtractor>();
+		
+		generateXSL();
 		
 		for (String x : keys) {
 			BiblioExtractor be = new BiblioExtractor(x, inputFiles.get(x));
@@ -61,6 +65,9 @@ public class Main {
 
 	}
 	
+	private static void generateXSL(){
+		
+	}
 	
 	private static void processArgs(String[] args) {
 		File outTemp = new File(args[args.length - 1]);
