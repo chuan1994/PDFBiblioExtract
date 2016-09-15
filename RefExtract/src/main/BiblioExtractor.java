@@ -1,6 +1,7 @@
 package main;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -15,10 +16,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
-import extractor.BiblioStripper;
+import extractor.BiblioPageFinder;
+import extractor.BibliographyParser;
 import extractor.FontGroup;
 import extractor.FreeCiteConnection;
 
@@ -27,6 +30,7 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 	private String path;
 	private File pdf;
 	private File output;
+	private PDDocument pdDoc;
 	
 	private ArrayList<FontGroup> fontGroups = new ArrayList<FontGroup>();
 	
@@ -34,13 +38,33 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 		this.path = path;
 		this.pdf = pdf;
 
+		this.setup();
 	}
 
+	private void setup(){
+		this.pdDoc = new PDDocument();
+		
+		try {
+			pdDoc = pdDoc.load(pdf);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	@Override
 	protected Void doInBackground() throws Exception {
-		BiblioStripper bs = new BiblioStripper();
-		ArrayList<String> extracted = bs.getBiblio();
+		BiblioPageFinder bpf = new BiblioPageFinder();
+		bpf.setDocument(pdDoc);
+		int startPage = bpf.getBiblioStart();
 		
+		BibliographyParser bp = new BibliographyParser(bpf.getLeftMost());
+		bp.setStartPage(startPage);
+		System.out.println(bp.getText(pdDoc));
+		
+		ArrayList<String> extracted = bp.getBiblio();
+		
+		pdDoc.close();
 		FreeCiteConnection fcc = new FreeCiteConnection(extracted);
 		String returnVal = fcc.sendPostData();
 		
