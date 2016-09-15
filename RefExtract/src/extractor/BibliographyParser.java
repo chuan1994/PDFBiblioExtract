@@ -37,6 +37,7 @@ public class BibliographyParser extends PDFTextStripper{
 	@Override
 	public void writeString(String text, List<TextPosition> textPositions) throws IOException {
 		if(startOfLine){
+//			System.out.println(text + "    " + textPositions.get(0).getXDirAdj());
 			startOfLine = false;
 			if(Math.abs((textPositions.get(0).getXDirAdj()- leftVal)) < 20){
 				if(currentBuilder.length()> 0){
@@ -54,10 +55,10 @@ public class BibliographyParser extends PDFTextStripper{
 
 	
 	public ArrayList<String> getBiblio(){
-		for (String x: biblioList){
-			System.out.println(x);
-			System.out.println("");
-		}
+//		for (String x: biblioList){
+//			System.out.println(x);
+//			System.out.println("");
+//		}
 		
 		return biblioList;
 	}

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 
 import javax.swing.SwingWorker;
@@ -29,7 +28,7 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 
 	private String path;
 	private File pdf;
-	private File output;
+	private File outputFolder;
 	private PDDocument pdDoc;
 	
 	private ArrayList<FontGroup> fontGroups = new ArrayList<FontGroup>();
@@ -60,7 +59,7 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 		
 		BibliographyParser bp = new BibliographyParser(bpf.getLeftMost());
 		bp.setStartPage(startPage);
-		System.out.println(bp.getText(pdDoc));
+		bp.getText(pdDoc);
 		
 		ArrayList<String> extracted = bp.getBiblio();
 		
@@ -81,7 +80,6 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		
 		transformer.transform(new DOMSource(doc), new StreamResult(new OutputStreamWriter(System.out, "UTF-8")));
-		
 		return null;
 	}
 }

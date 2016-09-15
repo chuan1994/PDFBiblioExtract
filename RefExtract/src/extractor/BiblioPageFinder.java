@@ -2,7 +2,9 @@ package extractor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -67,7 +69,7 @@ public class BiblioPageFinder extends PDFTextStripper {
 	}
 	
 	public float getLeftMost(){
-		return leftPos.indexOf(Collections.min(leftPos));
+		return leftPos.stream().min(Comparator.<Float>naturalOrder()).get();
 	}
 
 	// helper method to get largest font size on page
@@ -102,7 +104,7 @@ public class BiblioPageFinder extends PDFTextStripper {
 		if(startOfLine){
 			startOfLine = false;
 			TextPosition first = textPositions.get(0);
-			leftPos.add(first.getXDirAdj());
+			leftPos.add(textPositions.get(0).getXDirAdj());
 		}
 		
 		if (text.matches("\\s+") || text.equals("")) {
