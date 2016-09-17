@@ -28,6 +28,17 @@ import extractor.BibliographyParser;
 import extractor.FontGroup;
 import extractor.FreeCiteConnection;
 
+/**
+ * This class extends swingworker to perform the extraction process in the background.
+ * It is responsible for:
+ * Retrieving the bibliography
+ * Calling freecite API
+ * Processing websites reply
+ * Putting results in the output folder
+ * 
+ * @author cwu323
+ *
+ */
 public class BiblioExtractor extends SwingWorker<Void, Void> {
 
 	private String path;
@@ -55,16 +66,21 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 
 	@Override
 	protected Void doInBackground() throws Exception {
+		//Retrieving bibliography metadata using the finder
 		BiblioPageFinder bpf = new BiblioPageFinder();
 		bpf.setDocument(pdDoc);
 		int startPage = bpf.getBiblioStart();		
 		
+		//Retrieving the references from bibliography
 		BibliographyParser bp = new BibliographyParser(bpf.getLeftMost());
 		bp.setStartPage(startPage);
 		bp.getText(pdDoc);
 
 		ArrayList<String> extracted = bp.getBiblio();
+		
 		pdDoc.close();
+		
+		//Connecting to the freecite webapi
 		FreeCiteConnection fcc = new FreeCiteConnection(extracted);
 		String returnVal = fcc.sendPostData();
 
@@ -73,6 +89,7 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = builder.parse(new InputSource(new StringReader(returnVal)));
 
+		// Removing invalid citations
 		Element root = doc.getDocumentElement();
 		NodeList citations = doc.getElementsByTagName("citation");
 		for (int i = citations.getLength() - 1; i >= 0; i--) {
@@ -82,15 +99,17 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 			}
 		}
 
+		// Removing xmlns nodes
 		NodeList ctx = doc.getElementsByTagName("ctx:context-objects");
 		for (int i = ctx.getLength() - 1; i >= 0; i--) {
 			root.removeChild(ctx.item(i));
 		}
 
-		Node pi = doc.createProcessingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"temp.xsl\"");
+		//Adding in the references to the xml stylesheet
+		Node pi = doc.createProcessingInstruction("xml-stylesheet", ("type=\"text/xsl\" href=\"" + Main.xsl.getName() + "\""));
 		doc.insertBefore(pi, root);
 
-		// Print to Output
+		//Transforming dom document to be printed
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -103,6 +122,11 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 		return null;
 	}
 
+	/**
+	 * Helper method to get the output files name
+	 * Name of the file is the same as the name of the pdf document
+	 * (considers if a file already exists)
+	 */
 	private void getOutput() {
 
 		try {
