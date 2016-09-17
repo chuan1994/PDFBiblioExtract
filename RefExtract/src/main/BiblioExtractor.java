@@ -59,14 +59,13 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 	protected Void doInBackground() throws Exception {
 		BiblioPageFinder bpf = new BiblioPageFinder();
 		bpf.setDocument(pdDoc);
-		int startPage = bpf.getBiblioStart();
-
+		int startPage = bpf.getBiblioStart();		
+		
 		BibliographyParser bp = new BibliographyParser(bpf.getLeftMost());
 		bp.setStartPage(startPage);
 		bp.getText(pdDoc);
 
 		ArrayList<String> extracted = bp.getBiblio();
-
 		pdDoc.close();
 		FreeCiteConnection fcc = new FreeCiteConnection(extracted);
 		String returnVal = fcc.sendPostData();
@@ -107,17 +106,21 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 	}
 
 	private void getOutput() {
-		String outputPath = Main.outputFolder.getPath() + File.separator + pdf.getName().split("\\.")[0] + ".xml";
 
 		try {
+			
+			String outputPath = Main.outputFolder.getAbsolutePath() + File.separator + pdf.getName().split("\\.")[0] + ".xml";
+
+			System.out.println(outputPath);
 			output = new File(outputPath);
 			if (!output.exists()) {
-				output.createNewFile();
+				System.out.println(output.createNewFile());
+				
 			} else {
 				int i = 0;
 				while (output.exists()) {
 					i++;
-					outputPath = Main.outputFolder.getCanonicalPath() + File.separator + pdf.getName().split("\\.")[0]
+					outputPath = Main.outputFolder.getAbsolutePath() + File.separator + pdf.getName().split("\\.")[0]
 							+ "(" + i + ")" + ".xml";
 
 					output = new File(outputPath);

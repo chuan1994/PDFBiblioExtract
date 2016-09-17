@@ -81,12 +81,19 @@ public class Main {
 
 	private static void generateXSL() {
 		try {
-			File xsl = new File(outputFolder.getPath() + File.separator + "temp.xsl");
+			File xsl = new File(outputFolder.getAbsolutePath() + System.getProperty("file.separator") + "temp.xsl");
 
+			if(outputFolder.exists()){
+				System.out.println("exists");
+			}
+			
+			
 			if (xsl.isFile()) {
 				return;
 			}
-
+			
+			xsl.createNewFile();
+			
 			InputStream is = Main.class.getResourceAsStream("/resources/temp.xsl");
 			OutputStream os = new FileOutputStream(xsl);
 			
@@ -129,8 +136,9 @@ public class Main {
 		}
 		outputFolder = outFolder;
 		if (!outputFolder.exists()) {
-			outputFolder.mkdir();
+			System.out.println(outputFolder.mkdir()) ;
 		}
+		
 	}
 
 	private static void addInput(String path) {
