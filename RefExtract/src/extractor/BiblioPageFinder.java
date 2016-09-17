@@ -69,7 +69,18 @@ public class BiblioPageFinder extends PDFTextStripper {
 	}
 
 	public float getLeftMost() {
-		return leftPos.stream().min(Comparator.<Float> naturalOrder()).get();
+		leftPos.sort(Comparator.<Float> naturalOrder());
+		
+		ArrayList<Float> temp = new ArrayList<Float>();
+		
+		for(float f: leftPos){
+			temp.add(f);
+			if(temp.size() == 5){
+				break;
+			}
+		}
+		
+		return temp.stream().max(Comparator.<Float> naturalOrder()).get();
 	}
 
 	// helper method to get largest font size on page
