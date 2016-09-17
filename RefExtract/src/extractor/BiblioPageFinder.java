@@ -12,6 +12,12 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
+/**
+ * This class is responsible for identifying where the bibliography is
+ * in terms of pages and other metadata regarding to format
+ * @author cwu323
+ *
+ */
 public class BiblioPageFinder extends PDFTextStripper {
 
 	private int currentPage;
@@ -28,15 +34,25 @@ public class BiblioPageFinder extends PDFTextStripper {
 		super();
 	}
 
+	/**
+	 * Setting the document to extract the bibliography from
+	 * @param pdDoc
+	 */
 	public void setDocument(PDDocument pdDoc) {
 		this.pdDoc = pdDoc;
 		currentPage = pdDoc.getNumberOfPages();
 	}
 
+	/**
+	 * Method responsible for locating the pages of the bibliography
+	 * @return
+	 * @throws IOException
+	 */
 	public int findPages() throws IOException {
 		boolean biblioFound = false;
 		boolean enterBiblio = false;
 
+		//Search from the back of the document to find bibliography header.
 		while (!biblioFound && currentPage > 1) {
 
 			this.setStartPage(currentPage);
@@ -53,6 +69,7 @@ public class BiblioPageFinder extends PDFTextStripper {
 			} else if (enterBiblio) {
 
 				biblioFound = true;
+				break;
 			}
 
 			currentPage--;
@@ -63,11 +80,21 @@ public class BiblioPageFinder extends PDFTextStripper {
 		return currentPage;
 	}
 
+	/**
+	 * This method is responsible for returning the start page of the bibliography
+	 * @return
+	 * @throws IOException
+	 */
 	public int getBiblioStart() throws IOException {
 		findPages();
-		return currentPage + 2;
+		return currentPage + 1;
 	}
 
+	/**
+	 * This method is responsible for finding the rough location of where
+	 * the reference item starts
+	 * @return
+	 */
 	public float getLeftMost() {
 		leftPos.sort(Comparator.<Float> naturalOrder());
 		
@@ -75,7 +102,7 @@ public class BiblioPageFinder extends PDFTextStripper {
 		
 		for(float f: leftPos){
 			temp.add(f);
-			if(temp.size() == 5){
+			if(temp.size() == (pdDoc.getNumberOfPages() - currentPage + 5)){
 				break;
 			}
 		}
@@ -83,7 +110,7 @@ public class BiblioPageFinder extends PDFTextStripper {
 		return temp.stream().max(Comparator.<Float> naturalOrder()).get();
 	}
 
-	// helper method to get largest font size on page
+	// helper method to get the font group with the largest font
 	private FontGroup getLargest() {
 		FontGroup largest = new FontGroup("", 0, "", currentPage);
 
@@ -95,6 +122,8 @@ public class BiblioPageFinder extends PDFTextStripper {
 		return largest;
 	}
 
+	//============================================================================
+	//Overriding methods to allow logic to know when a new line starts
 	@Override
 	protected void writeLineSeparator() throws IOException {
 		startOfLine = true;
@@ -106,6 +135,13 @@ public class BiblioPageFinder extends PDFTextStripper {
 		startOfLine = true;
 		super.startPage(page);
 	}
+	//============================================================================
+
+	/**
+	 * 	Sorting the text into fontgroups. Identifies the font metadata of the current text to be written
+	 * creates a new fontgroup when the font metadata changes to create a list of text organised by 
+	 * this metadata
+	 */
 
 	@Override
 	public void writeString(String text, List<TextPosition> textPositions) throws IOException {
@@ -147,7 +183,7 @@ public class BiblioPageFinder extends PDFTextStripper {
 					this.getCurrentPageNo());
 			currentFontGroups.add(f);
 
-			// Resetting for
+			// Resetting for next block
 			prevBaseFont = commonFont;
 			prevBaseFontSize = commonFontSize;
 			writeString("[" + commonFont + "," + commonFontSize + "," + this.getCurrentPageNo() + "] " + text);
