@@ -1,5 +1,14 @@
 package extractor;
 
+import java.io.PrintStream;
+
+/**
+ * Class to store font-based information to a block of text extracted from a pdf
+ * 
+ * Stores the font name, font size, corresponding text and page number
+ * @author cwu323
+ *
+ */
 public class FontGroup {
 	private String font;
 	private float fontSize;
@@ -12,7 +21,8 @@ public class FontGroup {
 		this.text = text;
 		this.pageNum = pageNum;
 	}
-	
+	//====================================================
+	//getters 
 	public String getFont(){
 		return this.font;
 	}
@@ -29,10 +39,12 @@ public class FontGroup {
 		return this.pageNum;
 	}
 	
-	public void print(){
-		System.out.println("font :" + font);
-		System.out.println("size :" + fontSize);
-		System.out.println("text :" + text);
-		System.out.println("page :" + pageNum);
+	//===================================================
+	//print function for testing purposes, to display all information
+	public void print(PrintStream ps){
+		ps.println("font :" + font);
+		ps.println("size :" + fontSize);
+		ps.println("text :" + text);
+		ps.println("page :" + pageNum);
 	}
 }
