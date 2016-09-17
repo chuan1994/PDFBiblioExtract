@@ -35,8 +35,6 @@ public class BiblioExtractor extends SwingWorker<Void, Void> {
 	private PDDocument pdDoc;
 	private File output;
 
-	private ArrayList<FontGroup> fontGroups = new ArrayList<FontGroup>();
-
 	public BiblioExtractor(String path, File pdf) {
 		this.path = path;
 		this.pdf = pdf;

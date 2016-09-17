@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import extractor.FreeCiteConnection;
-
 public class Main {
 	
 	private static HashMap<String, File> inputFiles = new HashMap<String, File>();
@@ -34,6 +32,7 @@ public class Main {
 		//retrieving the list paths 
 		Set<String> keys = inputFiles.keySet();
 
+		//creating a list to store all the processes.
 		ArrayList<BiblioExtractor> beList = new ArrayList<BiblioExtractor>();
 
 		generateXSL();
