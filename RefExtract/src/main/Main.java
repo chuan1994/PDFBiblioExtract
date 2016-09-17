@@ -14,6 +14,7 @@ public class Main {
 	
 	private static HashMap<String, File> inputFiles = new HashMap<String, File>();
 	public static File outputFolder;
+	public static File xsl;
 
 	public static void main(String[] args) {
 
@@ -35,14 +36,17 @@ public class Main {
 		//creating a list to store all the processes.
 		ArrayList<BiblioExtractor> beList = new ArrayList<BiblioExtractor>();
 
+		//Creating template XSL file to view the extracted text in table format 
 		generateXSL();
 
+		//starting a worker for each input file
 		for (String x : keys) {
 			BiblioExtractor be = new BiblioExtractor(x, inputFiles.get(x));
 			beList.add(be);
 			be.execute();
 		}
 
+		//Waiting for all workers to complete
 		while (!beList.isEmpty()) {
 			ArrayList<BiblioExtractor> removeList = new ArrayList<BiblioExtractor>();
 			for (BiblioExtractor be : beList) {
@@ -58,21 +62,21 @@ public class Main {
 
 	}
 
+	/**
+	 * generating the default xsl file to the target location.
+	 */
 	private static void generateXSL() {
 		try {
 			File xsl = new File(outputFolder.getAbsolutePath() + System.getProperty("file.separator") + "temp.xsl");
 
-			if(outputFolder.exists()){
-				System.out.println("exists");
-			}
-			
-			
-			if (xsl.isFile()) {
+			//check to see if file already exists
+			if (xsl.exists()) {
 				return;
 			}
 			
 			xsl.createNewFile();
 			
+			//Copying the resource xsl to the new file
 			InputStream is = Main.class.getResourceAsStream("/resources/temp.xsl");
 			OutputStream os = new FileOutputStream(xsl);
 			
@@ -95,9 +99,14 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
+	
+	/**
+	 * Processing the command line arguments provided.
+	 * Checks to ensure the input files and output folder are valid.
+	 * @param args
+	 */
 	private static void processArgs(String[] args) {
 		File outTemp = new File(args[args.length - 1]);
 		setOutput(outTemp);
@@ -130,6 +139,10 @@ public class Main {
 		inputFiles.put(path, y);
 	}
 
+	
+	/**
+	 * Method to display how to use this jar file. Displayed when wrong input provided
+	 */
 	private static void printHelp() {
 		System.out.println("To execute this jar please follow following:");
 		System.out.println("Run the jar with a list of input files separated by a space followed by an output folder");
