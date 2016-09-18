@@ -1,8 +1,4 @@
 #PDFBiblioExtract
-##Contents
-1. Requirements
-2. For End Users
-3. For Developers
 
 ##Requirements
 You will require the following conditions to run the program:
@@ -29,7 +25,7 @@ This code functions by using the Apache PDFBox library.
 
 It functions by identifying where the bilbiography section of the report is, identifying each reference item and sending it as a list to FreeCite.
 
-The source code is explained below
+The source code is explained below.
 
 ###Package - main
 Responsible for starting and running extractor classes.
@@ -50,4 +46,23 @@ Responsible for starting and running extractor classes.
 ###Package - extractor
 Responsible for all the extracting logic and any helper classes involved.
 
+**BibliographyParser class:**
+- Responisble for parsing the bibliopgraphy into individual reference items
+- getBiblio() function retrieves the parsed bibliography in the form of an arraylist
+- functions by identifying new lines which start at the x coordinate identified in BiblioPageFinder
+
+**BiblioPageFinder class:**
+- Responsible for retrieving the page the bibliography starts on
+- Assumes end of document is end of bibliography
+- Searches for bibliography header on page, to make it the start
+- Also finds the x coordinate of the start of each reference item, required for parsing the bibliograpy 
+
+**FontGroup class:**
+- Simple class to store the font based information
+- Stores - text, font, font size, page number
+
+**FreeCiteConnection class:**
+- Constructor requires an arraylist of strings. This is what is sent through the API call
+- Connects to FreeCite web API using a POST request
+- Response is collected as a string
 
