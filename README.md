@@ -66,3 +66,6 @@ Responsible for all the extracting logic and any helper classes involved.
 - Connects to FreeCite web API using a POST request
 - Response is collected as a string
 
+###Resources folder
+Contains the default XSL file. This file finds the title, author, journal and year for each citation in the output and displays it in table format. 
+
