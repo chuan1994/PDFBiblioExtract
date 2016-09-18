@@ -1,16 +1,12 @@
 #PDFBiblioExtract
-##Contents
-1. [Requirements](# requirements)
-2. [For End Users](# forendusers)
-3. [For Developers](# fordevelopers)
 
-##<a name="requirements">Requirements</a>
+##Requirements
 You will require the following conditions to run the program:
 - JVM installed on the machine
 - An internet connection
 - CLI tool to execute the jar
 
-##<a name="forendusers">For End Users</a>
+##For End Users
 The built standalone jar file is able to extract bibliography items from a specified PDF document or a specified list. You can perform this task by typing the following command into a CLI program:
 
     java -jar [name].jar [input files] [output folder]
@@ -24,7 +20,7 @@ It will store the output XML file as the name of the corresponding pdf.
 
 An xsl style sheet has been provided, if the output xml file is opened in a browser it will disaply it in table format. This xsl style sheet may be modified to view more information
 
-##<a name="fordevelopers">For Developers</a>
+##For Developers
 This code functions by using the Apache PDFBox library.
 
 It functions by identifying where the bilbiography section of the report is, identifying each reference item and sending it as a list to FreeCite.
