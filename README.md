@@ -1,8 +1,8 @@
 #PDFBiblioExtract
 ##Contents
-1. [Requirements](## Requirements)
-2. [For End Users](## For End Users)
-3. [For Developers](## For Developers)
+1. [Requirements](# https://github.com/chuan1994/PDFBiblioExtract/blob/feature/documentation/README.md#requirements)
+2. [For End Users](# https://github.com/chuan1994/PDFBiblioExtract/blob/feature/documentation/README.md#for-end-users)
+3. [For Developers](# https://github.com/chuan1994/PDFBiblioExtract/blob/feature/documentation/README.md#for-developers)
 
 ##Requirements
 You will require the following conditions to run the program:
