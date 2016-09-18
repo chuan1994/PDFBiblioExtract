@@ -1,8 +1,8 @@
 #PDFBiblioExtract
 ##Contents
-1. [Requirements](# Requirements)
-2. [For End Users](# For End Users)
-3. [For Developers](# For Developers)
+1. [Requirements](## Requirements)
+2. [For End Users](## For End Users)
+3. [For Developers](## For Developers)
 
 ##Requirements
 You will require the following conditions to run the program:
